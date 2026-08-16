@@ -1,0 +1,59 @@
+name: Verify cask
+
+# **手動でしか走らない。** cask が実際にインストールでき、
+# インストールされたアプリが Gatekeeper を通るかを実機の macOS で見る。
+#
+# 存在理由は、この tap を保守している端末が Windows で
+# `brew` を 1 度も実行できないこと。cask を書いた側が動作を
+# 確かめられないまま配るのを避けるための唯一の経路。
+#
+# **`spctl` が本命**。署名の構造物が入っていることと、
+# Gatekeeper が実際に受け入れることは別の主張で、
+# 前者はファイルを見れば分かるが後者は macOS に訊くしかない。
+on:
+  workflow_dispatch:
+    inputs:
+      cask:
+        description: "Cask token to verify"
+        required: true
+        default: "fuseforks"
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - name: Tap and parse
+        run: |
+          brew tap betyourluck/tap
+          # info はここで cask の Ruby を評価するので、構文と DSL の誤りは
+          # インストールを試みる前にここで落ちる。
+          brew info --cask "${{ inputs.cask }}"
+
+      # **quarantine を外さない。** Homebrew は既定でダウンロードした
+      # cask に検疫属性を付ける。外して入れると Gatekeeper の判定を
+      # 迂回してしまい、この workflow の目的そのものが消える。
+      - name: Install
+        run: brew install --cask "${{ inputs.cask }}"
+
+      - name: What landed
+        run: |
+          ls -la /Applications | grep -i fuseforks || ls -la /Applications
+
+      - name: Code signature
+        run: codesign -dvv /Applications/fuseforks.app
+
+      # 公証チケットがアプリへ綴じ込まれているか。綴じ込まれていれば
+      # 起動時に Apple へ問い合わせずに検証できる（オフラインでも開く）。
+      - name: Notarization ticket is stapled
+        run: xcrun stapler validate /Applications/fuseforks.app
+
+      # 本命。`source=Notarized Developer ID` が出れば、
+      # 署名が入っているだけでなく Gatekeeper が受け入れている。
+      - name: Gatekeeper assessment
+        run: spctl -a -vv /Applications/fuseforks.app
+
+      # homebrew-cask の CI が回すのと同じ検査。将来公式へ出すときの
+      # 距離が測れる。ここでは落とさない（tap 固有の指摘が混ざるため）。
+      - name: brew audit (informational)
+        continue-on-error: true
+        run: brew audit --cask --online --strict "betyourluck/tap/${{ inputs.cask }}"
