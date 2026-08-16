@@ -2,10 +2,6 @@
 
 A Homebrew tap for [Outcasts](https://outcasts.jp) software.
 
-```sh
-brew tap betyourluck/tap
-```
-
 ## Casks
 
 | | |
@@ -13,6 +9,17 @@ brew tap betyourluck/tap
 | [`fuseforks`](Casks/fuseforks.rb) | [Outcasts Fuseforks](https://github.com/betyourluck/Fuseforks) — multi-agent AI orchestration for the desktop |
 
 ```sh
+brew install --cask betyourluck/tap/fuseforks
+```
+
+The fully qualified name is not optional. Tapping a repository does not grant
+Homebrew permission to load code from it, so `brew tap` followed by the short
+name is refused as an untrusted tap. Naming the cask in full trusts that one
+cask and nothing else. If you would rather use the short name, grant trust
+explicitly first:
+
+```sh
+brew trust --cask betyourluck/tap/fuseforks
 brew install --cask fuseforks
 ```
 
@@ -31,7 +38,16 @@ deletes that too — see the `zap` stanza in the cask for the exact paths.
 [Outcasts](https://outcasts.jp) のソフトウェア向けの Homebrew tap です。
 
 ```sh
-brew tap betyourluck/tap
+brew install --cask betyourluck/tap/fuseforks
+```
+
+**完全修飾名は省略できません。** tap しただけでは Homebrew はそのリポジトリの
+コードを読み込む許可を得ないので、短い名前で入れようとすると「信頼されていない
+tap」として拒否されます。完全修飾で書くと**その cask だけ**を信頼したことになります。
+短い名前で使いたい場合は、先に信頼を与えてください:
+
+```sh
+brew trust --cask betyourluck/tap/fuseforks
 brew install --cask fuseforks
 ```
 

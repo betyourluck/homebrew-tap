@@ -22,18 +22,22 @@ jobs:
   verify:
     runs-on: macos-latest
     steps:
+      # **完全修飾名で呼ぶ。** tap しただけでは信頼は与えられず、
+      # 短い名前は "Refusing to load cask ... from untrusted tap" で拒否される。
+      # 完全修飾は「その cask だけを信頼する」の意味になる。
+      # 利用者へ配る手順もこの形でなければ動かない。
       - name: Tap and parse
         run: |
           brew tap betyourluck/tap
           # info はここで cask の Ruby を評価するので、構文と DSL の誤りは
           # インストールを試みる前にここで落ちる。
-          brew info --cask "${{ inputs.cask }}"
+          brew info --cask "betyourluck/tap/${{ inputs.cask }}"
 
       # **quarantine を外さない。** Homebrew は既定でダウンロードした
       # cask に検疫属性を付ける。外して入れると Gatekeeper の判定を
       # 迂回してしまい、この workflow の目的そのものが消える。
       - name: Install
-        run: brew install --cask "${{ inputs.cask }}"
+        run: brew install --cask "betyourluck/tap/${{ inputs.cask }}"
 
       - name: What landed
         run: |
