@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       cask:
-        description: "Cask token to verify"
+        description: "Cask token to verify (fuseforks / kataribe)"
         required: true
         default: "fuseforks"
 
@@ -33,6 +33,15 @@ jobs:
           # インストールを試みる前にここで落ちる。
           brew info --cask "betyourluck/tap/${{ inputs.cask }}"
 
+          # **`.app` 名は cask から引く。トークンからは導けない** —
+          # `fuseforks` → `fuseforks.app` だが `kataribe` → `Kataribe.app` で
+          # 大小が違う（`.app` 名は Tauri の productName がそのまま出る）。
+          # cask の `app` スタンザを単一真実源にすれば、cask が増えても
+          # この workflow は触らなくてよい。
+          APP=$(brew info --json=v2 --cask "betyourluck/tap/${{ inputs.cask }}"             | jq -er '.casks[0].artifacts[] | select(.app) | .app[0]')
+          echo "APP=$APP" >> "$GITHUB_ENV"
+          echo "app artifact: $APP"
+
       # **quarantine を外さない。** Homebrew は既定でダウンロードした
       # cask に検疫属性を付ける。外して入れると Gatekeeper の判定を
       # 迂回してしまい、この workflow の目的そのものが消える。
@@ -41,20 +50,20 @@ jobs:
 
       - name: What landed
         run: |
-          ls -la /Applications | grep -i fuseforks || ls -la /Applications
+          ls -la "/Applications/$APP" || ls -la /Applications
 
       - name: Code signature
-        run: codesign -dvv /Applications/fuseforks.app
+        run: codesign -dvv "/Applications/$APP"
 
       # 公証チケットがアプリへ綴じ込まれているか。綴じ込まれていれば
       # 起動時に Apple へ問い合わせずに検証できる（オフラインでも開く）。
       - name: Notarization ticket is stapled
-        run: xcrun stapler validate /Applications/fuseforks.app
+        run: xcrun stapler validate "/Applications/$APP"
 
       # 本命。`source=Notarized Developer ID` が出れば、
       # 署名が入っているだけでなく Gatekeeper が受け入れている。
       - name: Gatekeeper assessment
-        run: spctl -a -vv /Applications/fuseforks.app
+        run: spctl -a -vv "/Applications/$APP"
 
       # homebrew-cask の CI が回すのと同じ検査。将来公式へ出すときの
       # 距離が測れる。ここでは落とさない（tap 固有の指摘が混ざるため）。
