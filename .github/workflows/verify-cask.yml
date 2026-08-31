@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       cask:
-        description: "Cask token to verify (fuseforks / kataribe)"
+        description: "Cask token to verify (fuseforks / lorekeel)"
         required: true
         default: "fuseforks"
 
