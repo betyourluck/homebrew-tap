@@ -1,8 +1,8 @@
 cask "lorekeel" do
   # v0.5.16 and earlier shipped as "Kataribe" (different .app name, different
   # bundle identifier), so this cask starts at the first Lorekeel-named release.
-  version "0.6.0"
-  sha256 "57e438e7f510bbc0b37c1565a506c06f522a8825d1b92a26ce6405a7ae46bd16"
+  version "0.6.1"
+  sha256 "5d8cb93273256e171b953f2cbadec5d49cefbf50d32ffb62c0c308493c22e934"
 
   url "https://github.com/betyourluck/Lorekeel/releases/download/v#{version}/Lorekeel_#{version}_aarch64.dmg",
       verified: "github.com/betyourluck/Lorekeel/"
