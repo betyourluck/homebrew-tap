@@ -1,6 +1,6 @@
 cask "fuseforks" do
-  version "0.1.15"
-  sha256 "719e3484cb8e6264e2e83cf48eeb26b5ca6a7e8cd2503de060aefc405aed8d20"
+  version "0.2.0"
+  sha256 "df50b54d8b6422242f6ed737f887c0d30b765c442f2f7699d0733923382d8ad0"
 
   url "https://github.com/betyourluck/Fuseforks/releases/download/v#{version}/fuseforks_#{version}_aarch64.dmg",
       verified: "github.com/betyourluck/Fuseforks/"
