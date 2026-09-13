@@ -2,8 +2,7 @@ cask "fuseforks" do
   version "0.2.3"
   sha256 "472a0008318d5bfe7e9a69fe7ff513f46efbd13a043b4a5d33491fdbf7743b79"
 
-  url "https://github.com/betyourluck/Fuseforks/releases/download/v#{version}/fuseforks_#{version}_aarch64.dmg",
-      verified: "github.com/betyourluck/Fuseforks/"
+  url "https://github.com/betyourluck/Fuseforks/releases/download/v#{version}/fuseforks_#{version}_aarch64.dmg"
   name "Outcasts Fuseforks"
   desc "Multi-agent AI orchestration for the desktop"
   homepage "https://github.com/betyourluck/Fuseforks"

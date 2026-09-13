@@ -4,8 +4,7 @@ cask "lorekeel" do
   version "0.6.6"
   sha256 "73a6978be620d891b2c75685d5cddb0438c499c2d8fbf03b3f8bffc14f4b62ba"
 
-  url "https://github.com/betyourluck/Lorekeel/releases/download/v#{version}/Lorekeel_#{version}_aarch64.dmg",
-      verified: "github.com/betyourluck/Lorekeel/"
+  url "https://github.com/betyourluck/Lorekeel/releases/download/v#{version}/Lorekeel_#{version}_aarch64.dmg"
   name "Lorekeel"
   desc "TRPG game master with a deterministic Rust engine and a cloud LLM narrator"
   homepage "https://github.com/betyourluck/Lorekeel"

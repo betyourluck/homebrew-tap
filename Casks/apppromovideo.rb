@@ -4,8 +4,7 @@ cask "apppromovideo" do
   version "0.1.1"
   sha256 "b3f4a812fae543666e94047b45912ba0b3e086b5bf9e404d94e4afc4552e46a7"
 
-  url "https://github.com/betyourluck/AppPromoVideo/releases/download/v#{version}/AppPromoVideo_#{version}_aarch64.dmg",
-      verified: "github.com/betyourluck/AppPromoVideo/"
+  url "https://github.com/betyourluck/AppPromoVideo/releases/download/v#{version}/AppPromoVideo_#{version}_aarch64.dmg"
   name "Outcasts AppPromoVideo"
   desc "Turns an app repository and UI snapshots into prompts and reference images for video-generation AIs"
   homepage "https://github.com/betyourluck/AppPromoVideo"
