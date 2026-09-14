@@ -1,8 +1,8 @@
 cask "apppromovideo" do
   # v0.1.0 shipped unsigned (the release workflow had no Apple secrets yet), so
   # this cask starts at v0.1.1, the first release that is signed and notarized.
-  version "0.1.1"
-  sha256 "b3f4a812fae543666e94047b45912ba0b3e086b5bf9e404d94e4afc4552e46a7"
+  version "0.1.2"
+  sha256 "aa7937a98cfdf221c540ee2e1e4a8eb617fd0c709c17c7a78e0a3ea10698d5f0"
 
   url "https://github.com/betyourluck/AppPromoVideo/releases/download/v#{version}/AppPromoVideo_#{version}_aarch64.dmg"
   name "Outcasts AppPromoVideo"
