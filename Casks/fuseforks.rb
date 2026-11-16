@@ -1,6 +1,6 @@
 cask "fuseforks" do
-  version "0.7.0"
-  sha256 "da082f76f5517f3e6efaeef932a9389024b04d14f4a334da59708045ad753a58"
+  version "0.7.1"
+  sha256 "3385931d46dac943e0b10ab5c5bbd7a553dda9be388399447319c2cf03cf8d8d"
 
   url "https://github.com/betyourluck/Fuseforks/releases/download/v#{version}/fuseforks_#{version}_aarch64.dmg"
   name "Outcasts Fuseforks"
