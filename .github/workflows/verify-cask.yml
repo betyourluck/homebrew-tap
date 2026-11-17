@@ -22,31 +22,38 @@ jobs:
   verify:
     runs-on: macos-latest
     steps:
-      # **完全修飾名で呼ぶ。** tap しただけでは信頼は与えられず、
-      # 短い名前は "Refusing to load cask ... from untrusted tap" で拒否される。
-      # 完全修飾は「その cask だけを信頼する」の意味になる。
-      # 利用者へ配る手順もこの形でなければ動かない。
-      - name: Tap and parse
-        run: |
-          brew tap betyourluck/tap
-          # info はここで cask の Ruby を評価するので、構文と DSL の誤りは
-          # インストールを試みる前にここで落ちる。
-          brew info --cask "betyourluck/tap/${{ inputs.cask }}"
-
-          # **`.app` 名は cask から引く。トークンからは導けない** —
-          # `fuseforks` → `fuseforks.app` だが `kataribe` → `Kataribe.app` で
-          # 大小が違う（`.app` 名は Tauri の productName がそのまま出る）。
-          # cask の `app` スタンザを単一真実源にすれば、cask が増えても
-          # この workflow は触らなくてよい。
-          APP=$(brew info --json=v2 --cask "betyourluck/tap/${{ inputs.cask }}"             | jq -er '.casks[0].artifacts[] | select(.app) | .app[0]')
-          echo "APP=$APP" >> "$GITHUB_ENV"
-          echo "app artifact: $APP"
-
+      # **完全修飾名の install から始める。** 利用者へ配る手順
+      # (`brew install --cask betyourluck/tap/<cask>`) と同じ道をそのまま測る。
+      # 先に `brew tap` も `brew trust` もしない — 利用者はしないので、
+      # ここで足すと「install だけで入る」ことを測らなくなる。
+      #
+      # 完全修飾名の install は「その cask だけを信頼する」の意味になる。
+      # tap しただけでは信頼は与えられず、信頼の無い cask を読もうとする
+      # コマンドは "Refusing to load cask ... from untrusted tap" で止まる。
+      #
+      # **install より前に `brew info` を置かない。** 以前はここで cask を
+      # 読んで構文の誤りを先に落としていた (2026-11-01 の実行では、完全修飾名の
+      # `brew info` が "Trusted cask ..." を出して通っていた)。2026-11-17 には
+      # 同じ行が上の拒否で止まり、lorekeel でも fuseforks でも同じだった。
+      # cask の書き間違いは、この install の手順で落ちる。
+      #
       # **quarantine を外さない。** Homebrew は既定でダウンロードした
       # cask に検疫属性を付ける。外して入れると Gatekeeper の判定を
       # 迂回してしまい、この workflow の目的そのものが消える。
       - name: Install
         run: brew install --cask "betyourluck/tap/${{ inputs.cask }}"
+
+      # **`.app` 名は cask から引く。トークンからは導けない** —
+      # `fuseforks` → `fuseforks.app` だが `kataribe` → `Kataribe.app` で
+      # 大小が違う（`.app` 名は Tauri の productName がそのまま出る）。
+      # cask の `app` スタンザを単一真実源にすれば、cask が増えても
+      # この workflow は触らなくてよい。
+      # install がこの cask を信頼した後なので、ここの `brew info` は読める。
+      - name: Resolve the app name
+        run: |
+          APP=$(brew info --json=v2 --cask "betyourluck/tap/${{ inputs.cask }}" | jq -er '.casks[0].artifacts[] | select(.app) | .app[0]')
+          echo "APP=$APP" >> "$GITHUB_ENV"
+          echo "app artifact: $APP"
 
       - name: What landed
         run: |
